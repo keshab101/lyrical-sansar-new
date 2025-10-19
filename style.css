@@ -37,8 +37,8 @@ body:not(.dark-mode) #themeToggle {
 
 /* Dark mode style */
 body.dark-mode #themeToggle {
-  background-color: #333; /* Dark mode button bg */
-  box-shadow: 0 2px 5px rgba(255,255,255,0.2);
+  background-color: #a7a7a7; /* Dark mode button bg */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Collapsible header */
@@ -47,10 +47,15 @@ header {
   text-align: center;
   padding: 2rem 1rem 1rem 1rem;
   box-shadow: 0 4px 8px var(--card-shadow);
-  position: sticky;
+  position: fixed;
   top: 0;
+  width: 100%;
   z-index: 10;
-  transition: padding 0.3s ease, font-size 0.3s ease;
+  transition: transform 0.4s ease;
+}
+
+header.hidden {
+  transform: translateY(-100%);
 }
 
 header.shrink h1 {
@@ -75,6 +80,39 @@ header h1 {
   color: var(--text-color);
 }
 
+/* Adjust content spacing to account for fixed header */
+main {
+  margin-top: 130px;
+}
+
+#scrollTopBtn:hover {
+  transform: scale(1.1);
+}
+
+#scrollTopBtn.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Scroll-to-top button */
+#scrollTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background-color: #007aff;
+  color: #fff;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.2s ease;
+}
+
 #themeToggle {
   width: 40px;
   height: 40px;
@@ -96,7 +134,6 @@ header h1 {
 .motto {
   font-size: 1rem;
   color: var(--text-color);
-  margin-top: 0.5rem;
 }
 
 .search-container {

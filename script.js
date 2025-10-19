@@ -14,9 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function safeGetItem(key) {
     try { return localStorage.getItem(key); } catch (e) { return null; }
   }
-  function safeSetItem(key, value) {
-    try { localStorage.setItem(key, value); } catch (e) {}
-  }
 
   function applyInitialTheme() {
     const saved = safeGetItem("theme");
@@ -44,16 +41,35 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Collapsible header on scroll
   const header = document.querySelector("header");
-  let lastScrollTop = 0;
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+  let lastScrollY = window.scrollY;
 
   window.addEventListener("scroll", () => {
-    const st = window.scrollY;
-    if (st > 50) {
-      header.classList.add("shrink");
+    const currentScrollY = window.scrollY;
+
+    // Hide header when scrolling down
+    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      header.classList.add("hidden");
     } else {
-      header.classList.remove("shrink");
+      header.classList.remove("hidden");
     }
-    lastScrollTop = st;
+
+    // Show "back to top" button
+    if (currentScrollY > 400) {
+      scrollTopBtn.classList.add("show");
+    } else {
+      scrollTopBtn.classList.remove("show");
+    }
+
+    lastScrollY = currentScrollY;
+  });
+
+  // Scroll to top smoothly
+  scrollTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   });
 
   function renderSongs(songs) {
@@ -65,14 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     songs.forEach(song => {
       const title = song.title || song.Title || "Untitled";
-      const youtubeLink = song.youtubeLink || song.Youtube || song.youtube || "";
       const lyrics = song.lyrics || song.Lyrics || "";
 
       const card = document.createElement("div");
       card.className = "song-card";
       card.innerHTML = `
         <h3>${escapeHtml(title)}</h3>
-        ${youtubeLink ? `<a href="${escapeAttr(youtubeLink)}" target="_blank" rel="noopener noreferrer">🎧 Watch on YouTube</a>` : ""}
         <p>${escapeHtml(lyrics)}</p>
       `;
 
