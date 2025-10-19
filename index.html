@@ -8,19 +8,32 @@
 </head>
 <body>
   <header>
-    <h1>🎵 Lyrical Sansar</h1>
-    <p class="motto">Find lyrics of rare Nepali & Hindi songs</p>
+    <div class="header-top">
+      <h1>Lyrical Sansar</h1>
+      <!-- Dark Mode Toggle -->
+      <button id="themeToggle" aria-label="Toggle Dark Mode">🌙</button>
+    </div>
+    <p class="motto">Find lyrics of rare Nepali & Hindi songs 🎵</p>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by song title..."
+        oninput="filterSongs()"
+      />
+    </div>
   </header>
 
-  <main id="songList" class="song-list">
-    <!-- Songs will be dynamically added here -->
+  <main id="songsContainer">
+    <p class="loading">Loading songs...</p>
   </main>
 
   <footer>
-    <p>© 2025 Lyrical Sansar - Keshab Acharya</p>
+    <p>© 2025 Lyrical Sansar</p>
   </footer>
 
-  <script type="module" src="firebaseConfig.js"></script>
-  <script type="module" src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
