@@ -1,64 +1,116 @@
 let allSongs = [];
 
-async function fetchSongs() {
-  try {
-    
-    const openSheetUrl = "https://opensheet.elk.sh/1naJW40iojGxR9KYiQtB0Sn1FZnEVL8w8QxO5o-WEUjU/songs";
-    const fetchUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(openSheetUrl)}`;
-    const response = await fetch(fetchUrl);
-    const songs = await response.json();
-    allSongs = songs;
-    renderSongs(songs);
-  } catch (error) {
-    console.error("Error fetching songs:", error);
-    document.getElementById("songsContainer").innerHTML =
-      "<p>Unable to load songs at the moment. Please try again later.</p>";
-  }
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const fetchUrl = "https://script.google.com/macros/s/AKfycbzk6EEWzCfqfq5lya3d3YPh-5Pfs8GQOuxGYYLVnr6L0uYjg4PZylguia4URTaQVT8N/exec";
 
-function renderSongs(songs) {
   const container = document.getElementById("songsContainer");
-  container.innerHTML = "";
+  const searchInput = document.getElementById("searchInput");
+  const themeToggle = document.getElementById("themeToggle");
 
-  if (songs.length === 0) {
-    container.innerHTML = "<p>No songs found.</p>";
-    return;
+  // --- Dark mode setup ---
+  function safeGetItem(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function safeSetItem(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
   }
 
-  songs.forEach(song => {
-    const songCard = document.createElement("div");
-    songCard.className = "song-card";
-    songCard.innerHTML = `
-      <h3>${song.title}</h3>
-      <a href="${song.youtubeLink}" target="_blank">🎧 Watch on YouTube</a>
-      <p>${song.lyrics}</p>
-    `;
-    container.appendChild(songCard);
-  });
-}
+  function applyInitialTheme() {
+    const saved = safeGetItem("theme");
+    if (saved === "dark") {
+      document.body.classList.add("dark-mode");
+      themeToggle.textContent = "🌞";
+    } else {
+      document.body.classList.remove("dark-mode");
+      themeToggle.textContent = "🌙";
+    }
+  }
 
-function filterSongs() {
-  const query = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = allSongs.filter(song =>
-    song.title.toLowerCase().includes(query)
-  );
-  renderSongs(filtered);
-}
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      const isDark = document.body.classList.contains("dark-mode");
+      themeToggle.textContent = isDark ? "🌞" : "🌙";
+      safeSetItem("theme", isDark ? "dark" : "light");
+    });
+  }
 
-/* -------- Dark Mode Toggle -------- */
-const toggleButton = document.getElementById("themeToggle");
+  applyInitialTheme();
 
-// Load saved theme preference
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark-mode");
-  toggleButton.textContent = "☀️";
-}
+  function renderSongs(songs) {
+    container.innerHTML = "";
+    if (!Array.isArray(songs) || songs.length === 0) {
+      container.innerHTML = "<p>No songs found.</p>";
+      return;
+    }
 
-toggleButton.addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
-  const isDark = document.body.classList.contains("dark-mode");
-  toggleButton.textContent = isDark ? "☀️" : "🌙";
-  localStorage.setItem("theme", isDark ? "dark" : "light");
+    songs.forEach(song => {
+      const title = song.title || song.Title || "Untitled";
+      const youtubeLink = song.youtubeLink || song.Youtube || song.youtube || "";
+      const lyrics = song.lyrics || song.Lyrics || "";
+
+      const card = document.createElement("div");
+      card.className = "song-card";
+      card.innerHTML = `
+        <h3>${escapeHtml(title)}</h3>
+        ${youtubeLink ? `<a href="${escapeAttr(youtubeLink)}" target="_blank" rel="noopener noreferrer">🎧 Watch on YouTube</a>` : ""}
+        <p>${escapeHtml(lyrics)}</p>
+      `;
+
+      // Click to toggle lyrics
+      card.addEventListener("click", () => {
+        card.classList.toggle("expanded");
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str && str !== "") return "";
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\n", "<br>");
+  }
+  function escapeAttr(str) {
+    if (!str && str !== "") return "";
+    return String(str).replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+  }
+
+  async function fetchSongs() {
+    container.innerHTML = "<p class='loading'>Loading songs...</p>";
+    try {
+      const res = await fetch(fetchUrl);
+      if (!res.ok) {
+        container.innerHTML = `<p>Unable to fetch songs. HTTP ${res.status} — ${res.statusText}</p>`;
+        console.error("Fetch error:", res.status, res.statusText);
+        return;
+      }
+      const data = await res.json();
+      allSongs = Array.isArray(data) ? data : Object.values(data);
+      renderSongs(allSongs);
+    } catch (err) {
+      console.error("Fetch exception:", err);
+      container.innerHTML = "<p>Unable to load songs. Network or CORS error occurred.</p>";
+    }
+  }
+
+  function filterSongs() {
+    const q = (searchInput?.value || "").trim().toLowerCase();
+    if (!q) return renderSongs(allSongs);
+
+    const filtered = allSongs.filter(song => {
+      const title = (song.title || song.Title || "").toLowerCase();
+      const lyrics = (song.lyrics || song.Lyrics || "").toLowerCase();
+      return title.includes(q) || lyrics.includes(q);
+    });
+    renderSongs(filtered);
+  }
+
+  if (searchInput) searchInput.addEventListener("input", filterSongs);
+  window.filterSongs = filterSongs;
+
+  fetchSongs();
 });
-
-fetchSongs();
