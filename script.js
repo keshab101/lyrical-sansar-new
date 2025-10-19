@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("searchInput");
   const themeToggle = document.getElementById("themeToggle");
 
+  const sunIconUrl = "https://omgsymbol.com/download/sun/06/vector/logo.svg";
+  const moonIconUrl = "https://omgsymbol.com/download/moon/04/vector/logo.svg";
+
   // --- Dark mode setup ---
   function safeGetItem(key) {
     try { return localStorage.getItem(key); } catch (e) { return null; }
@@ -19,23 +22,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const saved = safeGetItem("theme");
     if (saved === "dark") {
       document.body.classList.add("dark-mode");
-      themeToggle.textContent = "🌞";
+      themeToggle.style.backgroundImage = `url(${moonIconUrl})`;
     } else {
       document.body.classList.remove("dark-mode");
-      themeToggle.textContent = "🌙";
+      themeToggle.style.backgroundImage = `url(${sunIconUrl})`;
     }
   }
 
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-      const isDark = document.body.classList.contains("dark-mode");
-      themeToggle.textContent = isDark ? "🌞" : "🌙";
-      safeSetItem("theme", isDark ? "dark" : "light");
-    });
-  }
-
+  // Toggle theme on click
+  themeToggle.addEventListener("click", () => {
+    const isDark = document.body.classList.toggle("dark-mode");
+    if (isDark) {
+      themeToggle.style.backgroundImage = `url(${moonIconUrl})`;
+    } else {
+      themeToggle.style.backgroundImage = `url(${sunIconUrl})`;
+    }
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
+  
   applyInitialTheme();
+  
+  // Collapsible header on scroll
+  const header = document.querySelector("header");
+  let lastScrollTop = 0;
+
+  window.addEventListener("scroll", () => {
+    const st = window.scrollY;
+    if (st > 50) {
+      header.classList.add("shrink");
+    } else {
+      header.classList.remove("shrink");
+    }
+    lastScrollTop = st;
+  });
 
   function renderSongs(songs) {
     container.innerHTML = "";

@@ -28,6 +28,20 @@ body.dark-mode {
   --footer-bg: #1a1a1a;
 }
 
+/* Light mode style */
+body:not(.dark-mode) #themeToggle {
+  background-color: #fff;
+  color: #171717;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Dark mode style */
+body.dark-mode #themeToggle {
+  background-color: #333; /* Dark mode button bg */
+  box-shadow: 0 2px 5px rgba(255,255,255,0.2);
+}
+
+/* Collapsible header */
 header {
   background: var(--header-bg);
   text-align: center;
@@ -36,6 +50,15 @@ header {
   position: sticky;
   top: 0;
   z-index: 10;
+  transition: padding 0.3s ease, font-size 0.3s ease;
+}
+
+header.shrink h1 {
+  font-size: 1.2rem;
+}
+
+header.shrink .motto {
+  display: none;
 }
 
 .header-top {
@@ -53,12 +76,17 @@ header h1 {
 }
 
 #themeToggle {
-  background: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: none;
-  font-size: 1.5rem;
   cursor: pointer;
-  color: var(--text-color);
-  transition: transform 0.2s ease;
+  background-color: #fff; /* Light mode default */
+  background-size: 60%; /* scale the icon */
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 #themeToggle:hover {
