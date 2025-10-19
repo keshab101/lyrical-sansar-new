@@ -45,7 +45,7 @@ body.dark-mode #themeToggle {
 header {
   background: var(--header-bg);
   text-align: center;
-  padding: 2rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 0.5rem 1rem; /* reduced */
   box-shadow: 0 4px 8px var(--card-shadow);
   position: fixed;
   top: 0;
@@ -78,11 +78,6 @@ header h1 {
   margin: 0;
   font-size: 2rem;
   color: var(--text-color);
-}
-
-/* Adjust content spacing to account for fixed header */
-main {
-  margin-top: 130px;
 }
 
 #scrollTopBtn:hover {
@@ -119,6 +114,7 @@ main {
   border-radius: 50%;
   border: none;
   cursor: pointer;
+  margin-right: 30px;
   background-color: #fff; /* Light mode default */
   background-size: 60%; /* scale the icon */
   background-repeat: no-repeat;
@@ -141,10 +137,9 @@ main {
 }
 
 #searchInput {
-  width: 90%;
-  max-width: 400px;
-  padding: 0.6rem 1rem;
-  border-radius: 20px;
+  width: 70%;
+  padding: 1rem 1rem;
+  border-radius: 50px;
   border: 1px solid #ccc;
   outline: none;
   font-size: 1rem;
@@ -164,16 +159,16 @@ main {
   align-items: center;
   padding: 1rem;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 160px auto 0 auto;
 }
 
 .song-card {
   background-color: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 3px 10px var(--card-shadow);
-  margin: 1rem 0;
+  box-shadow: 0 4px 10px var(--card-shadow);
+  margin: 1rem 1rem;
   padding: 1rem 1.5rem;
-  width: 100%;
+  width: 90%;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   overflow: hidden;
