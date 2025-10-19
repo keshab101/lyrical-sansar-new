@@ -2,9 +2,10 @@ let allSongs = [];
 
 async function fetchSongs() {
   try {
-    // Replace YOUR_SHEET_ID with your actual Google Sheet ID
-    const sheetUrl = "https://opensheet.elk.sh/1naJW40iojGxR9KYiQtB0Sn1FZnEVL8w8QxO5o-WEUjU/songs";
-    const response = await fetch(sheetUrl);
+    
+    const openSheetUrl = "https://opensheet.elk.sh/1naJW40iojGxR9KYiQtB0Sn1FZnEVL8w8QxO5o-WEUjU/songs";
+    const fetchUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(openSheetUrl)}`;
+    const response = await fetch(fetchUrl);
     const songs = await response.json();
     allSongs = songs;
     renderSongs(songs);
