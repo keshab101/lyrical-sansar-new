@@ -76,3 +76,14 @@ footer {
   color: #888;
   margin-top: 2rem;
 }
+
+.song-link a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #1e90ff;
+  text-decoration: none;
+}
+
+.song-link a:hover {
+  text-decoration: underline;
+}
